@@ -1,33 +1,70 @@
 import React from "react";
+import { useContext } from "react";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import DataContext from "./context/DataContext";
 
-const Card = ({ task, date, handleMoveTask, taskColumn }) => {
+const Card = ({ task }) => {
+  const { handleTaskClick, tasks, setTasks } = useContext(DataContext);
+
+  //Hanterar förflyttning av tasken
+  const handleMoveTask = (direction) => {
+    if (!task) return;
+
+    //Var tasksen ska
+    const columnMapping = {
+      forward: {
+        todo: "doing",
+        doing: "done",
+      },
+      backward: {
+        done: "doing",
+        doing: "todo",
+      },
+    };
+
+    //Ger tasken sin nya kolumn
+    const updatedTasks = tasks.map((prevtask) => {
+      if (prevtask.id === task.id) {
+        const nextColumn = columnMapping[direction][prevtask.column];
+        return { ...prevtask, column: nextColumn || prevtask.column };
+      }
+      return prevtask;
+    });
+
+    //Sätter state och skickar till LS
+    setTasks(updatedTasks);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  };
+
+  // Stylar pilarna baserat på kolumnens id
+  const isTodo = task.column === "todo";
+  const isDone = task.column === "done";
+  const arrowBackStyle = isTodo ? { color: "lightgray" } : { color: "black" };
+  const arrowForwardStyle = isDone
+    ? { color: "lightgray" }
+    : { color: "black" };
 
   return (
-    <div className="card" id={task.id} column={task.column}>
+    <div className="card" onClick={() => handleTaskClick(task.id)}>
       <IoIosArrowBack
         size={20}
-        color="black"
-        style={{ marginRight: "10px" }}
+        style={{ marginRight: "10px", ...arrowBackStyle }}
         onClick={(e) => {
           e.stopPropagation();
-          console.log("Moving task backward...");
           handleMoveTask("backward");
-        console.log(taskColumn)}}
+        }}
       />
-      <div className="cardHolder" >
-        <p className="taskCard">{task}</p>
+      <div className="cardHolder">
+        <p className="taskCard">{task.title}</p>
         <p className="dateCard" style={{ fontSize: "12px", color: "gray" }}>
-          {date}
+          {task.date}
         </p>
       </div>
       <IoIosArrowForward
         size={20}
-        color="black"
-        style={{ marginRight: "10px" }}
+        style={{ marginRight: "10px", ...arrowForwardStyle }}
         onClick={(e) => {
           e.stopPropagation();
-          console.log("Moving task forward...");
           handleMoveTask("forward");
         }}
       />

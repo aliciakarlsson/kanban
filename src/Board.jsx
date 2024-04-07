@@ -1,30 +1,22 @@
-import React, { useState } from "react";
 import Columns from "./Columns";
+import { useContext } from "react";
+import DataContext from "./context/DataContext";
+
 
 const Board = () => {
-    const [columns, setColumns] = useState([
-      {
-        id: 'todo',
-        title: "To Do",
-      },
-      {
-        id: 'doing',
-        title: "Doing",
-      },
-      {
-        id: 'done',
-        title: "Done",
-      },
-    ]);
+  const { columns } = useContext(DataContext);
 
-
+  console.log(columns);
   return (
     <main>
-        {columns.map((column, index) => (
-            <Columns key={index} id={column.id} title={column.title}/>
-        ))}
+      {columns.map((column, index) => (
+        //Skickar in de tre kolumnerna med hjälp av context
+        <Columns key={index} id={column.id} title={column.title} />
+      ))}
     </main>
   );
 };
 
 export default Board;
+
+

@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import DataContext from "./context/DataContext";
 
-const AddTask = ({ onAdd }) => {
+const AddTask = () => {
+  const { handleNewTask } = useContext(DataContext);
   const [newTask, setNewTask] = useState("");
 
+  //Skickar in tasken vid klick på enter
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && newTask.length > 0) {
-      onAdd(newTask);
+      handleNewTask(newTask);
       setNewTask("");
     }
   };
 
+  //Skickar in task vid klick på plusset
   const handleClick = () => {
     if (newTask.length > 0) {
-      onAdd(newTask);
+      handleNewTask(newTask);
       setNewTask("");
     }
   };
