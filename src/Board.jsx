@@ -6,7 +6,6 @@ import DataContext from "./context/DataContext";
 const Board = () => {
   const { columns } = useContext(DataContext);
 
-  console.log(columns);
   return (
     <main>
       {columns.map((column, index) => (
